@@ -77,68 +77,25 @@ the features, while the second one is needed for checking how well your
 classifier works.
 
 ```{r}
-# here goes a list of recommended libraries,
-# though you may install other ones if they are needed
 library(tidytext)
 library(readr)
 library(dplyr)
 library(ggplot2)
 ```
-
-## Instructions
-
--   The first step is data pre-processing, which includes removing
-    punctuation marks and stop words
-
--   represent each message as a bag-of-words
-
--   using the training set, calculate all the conditional probabilities
-    in formula (1)
-
--   use those to predict classes for messages in the test set
-
--   evaluate effectiveness of the classifier by calculating the
-    corresponding metrics
-
--   shortly summarize your work
-
--   do not forget to submit both the (compiled) Rmd source file and the .html
-    output
     
 ### Data pre-processing
 
--   Read the *.csv* data files.
--   Сlear your data from punctuation or other unneeded symbols.
--   Clear you data from stop words. You don't want words as is, and, or
-    etc. to affect your probabilities distributions, so it is a wise
-    decision to get rid of them. Find list of stop words in the cms
-    under the lab task.
--   Represent each test message as its bag-of-words. Here:
-    <https://machinelearningmastery.com/gentle-introduction-bag-words-model/>
-    you can find general introduction to the bag-of-words model and
-    examples on to create it.
--   It is highly recommended to get familiar with R dataframes, it would
-    make the work much easier to do.
--   Useful links:
-    -   <https://steviep42.github.io/webscraping/book/bagofwords.html#tidytext> -
-        example of using *tidytext* to count frequencies of the words.
-    -   Basics of Text Mining in R:
-        <http://rstudio-pubs-static.s3.amazonaws.com/256588_57b585da6c054349825cba46685d8464.html>
-        . Note that it also includes an example on how to create a bag
-        of words from your text document.
-
 ```{r}
 list.files(getwd())
-list.files("data/0-authors")
+list.files("data/4-spam")
 ```
 
 ```{r}
-test_path <- "data/0-authors/test.csv"
-train_path <- "data/0-authors/train.csv"
+test_path <- "data/4-spam/test.csv"
+train_path <- "data/4-spam/train.csv"
 
-stop_words <- read_file("stop_words.txt")
-# https://stackoverflow.com/questions/27195912/why-does-strsplit-return-a-list
-splitted_stop_words <- strsplit(stop_words, split='\n')
+stop_words <- read_file("stop_words")
+splitted_stop_words <- strsplit(stop_words, split='\r\n')
 splitted_stop_words <- splitted_stop_words[[1]]
 ```
 
@@ -149,8 +106,9 @@ test <-  read.csv(file = test_path, stringsAsFactors = FALSE)
 
 ```{r}
 # note the power functional features of R bring us! 
-tidy_text <- unnest_tokens(train, 'splitted', 'text', token="words") %>%
-             filter(!splitted %in% stop_words)
+train <-  read.csv(file = train_path, stringsAsFactors = FALSE)
+tidy_text <- unnest_tokens(train, 'splitted', 'Message', token="words") %>%
+  filter(!splitted %in% splitted_stop_words)
 
 tidy_text %>% count(splitted,sort=TRUE)
 ```
