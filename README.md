@@ -126,35 +126,73 @@ naiveBayes <- setRefClass("naiveBayes",
                           
        # here it would be wise to have some vars to store intermediate result
        # frequency dict etc. Though pay attention to bag of wards! 
-       fields = list(),
+       fields = list(bag="data.frame"),
        methods = list(
                     # prepare your training data as X - bag of words for each of your
                     # messages and corresponding label for the message encoded as 0 or 1 
                     # (binary classification task)
                     fit = function(X, y)
                     {
-                         bag <- tidy_text %>% count(splitted,sort=TRUE, Category)
+                         bag <<- tidy_text %>% count(Category == "ham", splitted,sort=TRUE)
+                         words_spam_prob <<- hash()
+                         words_ham_prob <<- hash()
+                         for (i in 1:nrow(bag)) {
+                            temp <- bag[bag$ splitted == bag[i, 2, ], ]
+                            if (nrow(temp) == 1) {
+                              if (temp[1, 2] == FALSE) {
+                                words_spam_prob[temp[1, 2]] = 1
+                                words_ham_prob[temp[1, 2]] = 0
+                              }
+                              else {
+                                words_spam_prob[temp[1, 2]] = 0
+                                words_ham_prob[temp[1, 2]] = 1
+                              }
+                                
+                            } else {
+                                if (temp[1, 1] == FALSE) {
+                                  words_spam_prob[temp[1, 2]] = temp[1, 3] / (temp[1, 3] + temp[2, 3])
+                                  words_ham_prob[temp[1, 2]] = temp[2, 3] / (temp[1, 3] + temp[2, 3])
+                                
+                              } else {
+                                  words_spam_prob[temp[2, 2]] = temp[2, 3] / (temp[1, 3] + temp[2, 3])
+                                  words_ham_prob[temp[2, 2]] = temp[1, 3] / (temp[1, 3] + temp[2, 3])
+                              }
+                          }
+                         }
+                         message_prob <<- train %>% count(Category)
+                         message_ham_prob <<- message_prob[1, 2] / nrow(train)
+                         message_spam_prob <<- message_prob[2, 2] / nrow(train)
                     },
                     
-                    # return prediction for a single message 
                     predict = function(message)
                     {
-                         # TODO
+                      spam_prob = 1
+                      ham_prob = 1
+                      
+                      for(i in 1:nrow(message)) {
+                        if (words_spam_prob[[message[i, 2]]] != 0) {
+                          spam_prob <- spam_prob * (words_spam_prob[[message[i, 2]]])
+                        }
+                        if (words_ham_prob[[message[i, 2]]] != 0) {
+                          ham_prob <- ham_prob * (words_ham_prob[[message[i, 2]]])
+                        }
+                      }
+                      spam_prob <<- spam_prob * message_spam_prob
+                      ham_prob <<- ham_prob * message_ham_prob
                     },
                     
-                    # score you test set so to get the understanding how well you model
-                    # works.
-                    # look at f1 score or precision and recall
-                    # visualize them 
-                    # try how well your model generalizes to real world data! 
                     score = function(X_test, y_test)
                     {
                          # TODO
                     }
 ))
-
 model = naiveBayes()
-model$fit()
+data <- model$fit()
+message <- unnest_tokens(train[9, ], 'splitted', 'Message', token="words") %>%
+    filter(!splitted %in% splitted_stop_words)
+model$predict(message)
+spam_prob
+ham_prob
 ```
 
 ## Measure effectiveness of your classifier
