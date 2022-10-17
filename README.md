@@ -110,7 +110,6 @@ train <-  read.csv(file = train_path, stringsAsFactors = FALSE)
 tidy_text <- unnest_tokens(train, 'splitted', 'Message', token="words") %>%
   filter(!splitted %in% splitted_stop_words)
 
-tidy_text %>% count(splitted,sort=TRUE)
 ```
 
 ### Data visualization
@@ -134,7 +133,7 @@ naiveBayes <- setRefClass("naiveBayes",
                     # (binary classification task)
                     fit = function(X, y)
                     {
-                         # TODO
+                         bag <- tidy_text %>% count(splitted,sort=TRUE, Category)
                     },
                     
                     # return prediction for a single message 
