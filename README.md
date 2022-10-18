@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Lab Assignment 1: Naive Bayes Classifier
 
-### *Name1 Surname1, Name2 Surname2, Name3 Surname3*
+### *Bohdan Pelekh, Kyrylo Shamanskyi, Name3 Surname3*
 
 ## Introduction
 
@@ -173,22 +173,15 @@ naiveBayes <- setRefClass("naiveBayes",
                       colors <- c("green","red")
                       percent_result <- c(percent_success_train, percent_fail_train, percent_success_test, percent_fail_test)
                       regions <- c("Successful","Unsuccessful")
-
-                      png(file = "ResultsDistribution.png")
                       barplot(c(succes_train, unsucces_train, succes_test, unsucces_test), main = "Distribution of results by number of messages",
                               names.arg = percent_result, xlab = "Success Rate", font = 1.5, ylab = "Number of messages", col = colors, ylim=c(0, 4000))
                       # Add the legend to the chart
                       legend("topright", regions, cex = 1.3, fill = colors)
 
-                      dev.off()
-
 
 
                       # Create the data for the chart
                       c <- c(succes_train, unsucces_train, succes_test, unsucces_test)
-
-                      # Give the chart file a name
-                      png(file = "F1-Measure.png")
 
                       #Precision = TruePositives / (TruePositives + FalsePositives)
                       #Recall = TruePositives / (TruePositives + FalseNegatives)
@@ -215,7 +208,6 @@ naiveBayes <- setRefClass("naiveBayes",
                         main="F1-Measure (a combination of recall and precision)",border="brown",ylim=c(0, 1.2))
                       legend("topright", c(F1, F2), cex = 1.3, fill = c("blue", "orange"))
                       # Save the file
-                      dev.off()
                     }
 ))
 model = naiveBayes()
