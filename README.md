@@ -133,32 +133,18 @@ naiveBayes <- setRefClass("naiveBayes",
                     # (binary classification task)
                     fit = function(X, y)
                     {
-                         bag <<- tidy_text %>% count(Category == "ham", splitted,sort=TRUE)
-                         words_spam_prob <<- hash()
-                         words_ham_prob <<- hash()
-                         for (i in 1:nrow(bag)) {
-                            temp <- bag[bag$ splitted == bag[i, 2, ], ]
-                            if (nrow(temp) == 1) {
-                              if (temp[1, 2] == FALSE) {
-                                words_spam_prob[temp[1, 2]] = 1
-                                words_ham_prob[temp[1, 2]] = 0
-                              }
-                              else {
-                                words_spam_prob[temp[1, 2]] = 0
-                                words_ham_prob[temp[1, 2]] = 1
-                              }
-                                
-                            } else {
-                                if (temp[1, 1] == FALSE) {
-                                  words_spam_prob[temp[1, 2]] = temp[1, 3] / (temp[1, 3] + temp[2, 3])
-                                  words_ham_prob[temp[1, 2]] = temp[2, 3] / (temp[1, 3] + temp[2, 3])
-                                
-                              } else {
-                                  words_spam_prob[temp[2, 2]] = temp[2, 3] / (temp[1, 3] + temp[2, 3])
-                                  words_ham_prob[temp[2, 2]] = temp[1, 3] / (temp[1, 3] + temp[2, 3])
-                              }
+                         bag <<- tidy_text %>% count(splitted, sort=TRUE, Category)
+                          View(bag)
+                          words <<- tidy_text %>% count(splitted, sort=TRUE)
+                          View(words)
+                          words$prob_spam = 0
+                          for (i in 1:nrow(words)) {
+                            word <- words[i , 1]
+                            number <- words[i, 2]
+                            spam_words <- sum(bag$n[bag$Category=="spam" & bag$splitted == word]) + 0
+                            ham_words <- sum(bag$n[bag$Category=="ham" & bag$splitted == word]) + 0
+                            words$prob_spam[words$splitted==word] <- spam_words / number
                           }
-                         }
                          message_prob <<- train %>% count(Category)
                          message_ham_prob <<- message_prob[1, 2] / nrow(train)
                          message_spam_prob <<- message_prob[2, 2] / nrow(train)
