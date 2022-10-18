@@ -169,7 +169,23 @@ naiveBayes <- setRefClass("naiveBayes",
                     
                     score = function(X_test, y_test)
                     {
-                         # TODO
+                         succes_predict <- 0
+                         unsucces_predict <- 0
+                         for (i in 1:nrow(train)) {
+                            message <- unnest_tokens(test[i, ], 'splitted', 'Message', token="words") %>%
+                                filter(!splitted %in% splitted_stop_words)
+                            if (nrow(message) != 0) {
+                              r <- model$predict(message, words)
+                              if (r == train[i, 1]) {
+                                succes_predict <- succes_predict + 1
+                              } else {
+                                unsucces_predict <- unsucces_predict + 1
+                              }
+                            }
+                            
+                         }
+                         View(succes_predict)
+                         View(unsucces_predict)
                     }
 ))
 model = naiveBayes()
