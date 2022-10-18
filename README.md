@@ -34,6 +34,47 @@ can be calculated as
 
 $$\mathsf{P}(\mathrm{class} \mid \mathrm{\mathrm{observation}}) = \mathsf{P}(\mathrm{class})\times \prod_{i=1}^{n}\frac{\mathsf{P}(\mathrm{feature}_i\mid \mathrm{class})}{\mathsf{P}(\mathrm{feature}_i)}\tag{1}$$
 
+All the terms on the right-hand side can be estimated from the data as
+respective relative frequencies;\
+see [this
+site](https://monkeylearn.com/blog/practical-explanation-naive-bayes-classifier/)
+for more detailed explanations.
+
+## Data description
+
+There are 5 datasets uploaded on the cms.
+
+To determine your variant, take your team number from the list of teams
+on cms and take *mod 5* - this is the number of your data set.
+
+-   **0 - authors** This data set consists of citations of three famous
+    writers: Edgar Alan Poe, Mary Wollstonecraft Shelley and HP
+    Lovecraft. The task with this data set is to classify a piece of
+    text with the author who was more likely to write it.
+
+-   **1 - discrimination** This data set consists of tweets that have
+    discriminatory (sexism or racism) messages or of tweets that are of
+    neutral mood. The task is to determine whether a given tweet has
+    discriminatory mood or does not.
+
+-   **2 - fake news** This data set contains data of American news: a
+    headline and an abstract of the article. Each piece of news is
+    classified as fake or credible. The task is to classify the news
+    from test.csv as credible or fake.
+
+-   **3 - sentiment** All the text messages contained in this data set
+    are labeled with three sentiments: positive, neutral or negative.
+    The task is to classify some text message as the one of positive
+    mood, negative or neutral.
+
+-   **4 - spam** This last data set contains SMS messages classified as
+    spam or non-spam (ham in the data set). The task is to determine
+    whether a given message is spam or non-spam.
+
+Each data set consists of two files: *train.csv* and *test.csv*. The
+first one you will need find the probabilities distributions for each of
+the features, while the second one is needed for checking how well your
+classifier works.
 
 ```{r}
 library(tidytext)
@@ -61,7 +102,6 @@ splitted_stop_words <- splitted_stop_words[[1]]
 
 ```{r}
 test <-  read.csv(file = test_path, stringsAsFactors = FALSE)
-View(test)
 ```
 
 ```{r}
@@ -153,14 +193,6 @@ naiveBayes <- setRefClass("naiveBayes",
                               }
 
                            }
-                         #print(succes_predict)
-                         #print(unsucces_predict)
-                          res_test <- paste("Right score - ", succes_predict_test)
-                          res_train <- paste("Right score train - ", succes_predict_train)
-                          print(res_test)
-                          print(res_train)
-                          print(paste("Failed score test - ", unsucces_predict_test))
-                          print(paste("Failed score train - ", unsucces_predict_train))
                           result <- c(succes_predict_test, unsucces_predict_test, succes_predict_train, unsucces_predict_train)
                           return(result)
                     },
