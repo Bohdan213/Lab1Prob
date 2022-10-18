@@ -8,32 +8,6 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Probability and Statistics
-
-# Lab Assignment 1: Naive Bayes Classifier
-
-### *Bohdan Pelekh, Kyrylo Shamanskyi, Name3 Surname3*
-
-## Introduction
-
-During the past three weeks, you learned a couple of essential notions
-and theorems, and one of the most important among them is the *Bayes
-theorem*.
-
-One of its applications is **Naive Bayes classifier**, which is a
-probabilistic classifier whose aim is to determine which class some
-observation probably belongs to by using the Bayes formula:
-$$\mathsf{P}(\mathrm{class}\mid \mathrm{observation})=\frac{\mathsf{P}(\mathrm{observation}\mid\mathrm{class})\mathsf{P}(\mathrm{class})}{\mathsf{P}(\mathrm{observation})}$$
-
-Under the strong independence assumption, one can calculate
-$\mathsf{P}(\mathrm{observation} \mid \mathrm{class})$ as
-$$\mathsf{P}(\mathrm{observation}) = \prod_{i=1}^{n} \mathsf{P}(\mathrm{feature_i}), \qquad \mathsf{P}(\mathrm{observation} \mid \mathrm{class}) = \prod_{i=1}^{n} \mathsf{P}(\mathrm{feature}_i \mid \mathrm{class}),$$
-where $n$ is the total number of features describing a given
-observation. Thus, $\mathsf{P}(\mathrm{class}|\mathrm{observation})$ now
-can be calculated as
-
-$$\mathsf{P}(\mathrm{class} \mid \mathrm{\mathrm{observation}}) = \mathsf{P}(\mathrm{class})\times \prod_{i=1}^{n}\frac{\mathsf{P}(\mathrm{feature}_i\mid \mathrm{class})}{\mathsf{P}(\mathrm{feature}_i)}\tag{1}$$
-
 ```{r}
 library(tidytext)
 library(readr)
@@ -215,11 +189,3 @@ words <- model$fit()
 res <- model$score(words)
 model$visualize(res[1], res[2], res[3], res[4])
 ```
-
-## Measure effectiveness of your classifier
-
-First Bar Chart represents successful and unsuccessful predictions for train.csv and test.csv, they are shown in the appropriate sequence (train.csv [successful = 3892/(3892 + 443) = 90%, unsuccessful = 443/(3892 + 443) = 10%]; test.csv[successful = 1017/(1017 + 218) = 82%, unsuccessful = 218/(1017 + 218) = 18%). The second Bar Chart represents the F1 score metric, which includes the calculations of precision and recall. The result confirms the previous graph, as She decreases if the precision or recall decreases. In the first graph, we saw a decrease in accuracy as well.
-
-## Conclusions
-
-To predict which class the current message belongs to, we used The Naive Bayes Classifier, which is one of the simplest classifiers, for every word of the message we found the percentage ratio that it belongs to the ham and spam class. Thus, a set of basic elements was created that influenced belonging to one of the classes. The final class was determined by calculating the resulting percentage of belonging to one of the classes. As can be seen, the training data set has the best prediction result because the test data contains words that are not present in the test data. Accordingly, we did not take them into account, it turned out to be the only lever for errors
